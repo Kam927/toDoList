@@ -42,6 +42,9 @@ void saveTask(const std::string& filename, const std::vector<Tasks>& data){
     std::cerr << "Failed to save data to the file: " << filename << std::endl;
   }
 }
+Tasks loadTasks(){
+
+}
 void printMenu(){
   std::cout <<"---------------------------------\n"
     <<"            MAIN MENU            \n"
