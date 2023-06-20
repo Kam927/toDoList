@@ -2,32 +2,34 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
 #include <cstdlib>
 #include <unistd.h>
+
 struct Tasks {
   std::string taskName;
   std::string taskDetails;
   bool isDone = false;
 
 };
+
 std:: ostream& operator<<(std::ostream& os, const Tasks& task){
   os <<"\tTask Name: "<< task.taskName << std::endl;
-  os <<"\tTaks Details: " << task.taskDetails << std::endl;
+  os <<"\tTaks Priority: " << task.taskDetails << std::endl;
   os <<"\tCompleted: " << std::boolalpha << task.isDone << std::endl;
   return os;
 }
+
 Tasks createTask(){
   Tasks newTask;
-  std::cout <<"Task Name: \n";
-  std::cin >> newTask.taskName;
-  std::cin.ignore();
-  std::cout <<"Task Details: ";
-  std::string line;
-  while(std::getline(std::cin, line) && !line.empty()){
-    newTask.taskDetails += line +"\n";
-  }
+  std::cout <<"Task Name: ";
+  std::getline(std::cin >> std::ws,newTask.taskName); 
+  std::cout <<"Task Priority(High/Medium/Low): ";
+  std::getline(std::cin,newTask.taskDetails);
+//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   return newTask; 
 }
+
 void saveTask(const std::string& filename, const std::vector<Tasks>& data){
   std::ofstream outputFile(filename);
   if(outputFile.is_open()){
@@ -35,6 +37,7 @@ void saveTask(const std::string& filename, const std::vector<Tasks>& data){
       outputFile << value.taskName << "\n";
       outputFile << value.taskDetails << "\n";
       outputFile << value.isDone << "\n";
+      outputFile << '\n';
     }
     outputFile.close();
   }
@@ -42,9 +45,33 @@ void saveTask(const std::string& filename, const std::vector<Tasks>& data){
     std::cerr << "Failed to save data to the file: " << filename << std::endl;
   }
 }
-Tasks loadTasks(){
 
+void loadTasks(const std::string& filename, std::vector<Tasks>& data){
+  Tasks newTask;
+  std::string line;
+  std::ifstream inputFile(filename);
+  if(inputFile.is_open()){
+    int count = 0;
+    while(std::getline(inputFile,line)){
+        if(count % 3 == 0){
+          newTask.taskName = line;
+        }
+        else if(count % 3 == 1){
+          newTask.taskDetails = line;
+        }
+        else if(count % 3 == 2){
+          newTask.isDone = std::stoi(line);
+          data.push_back(newTask);
+        }
+      count++;
+    }
+    inputFile.close();
+  }
+  else{
+    std::cerr << "Failed to open file." << std::endl;
+  }
 }
+
 void printMenu(){
   std::cout <<"---------------------------------\n"
     <<"            MAIN MENU            \n"
