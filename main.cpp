@@ -26,7 +26,7 @@ Tasks createTask(){
   std::getline(std::cin >> std::ws,newTask.taskName); 
   std::cout <<"Task Priority(High/Medium/Low): ";
   std::getline(std::cin,newTask.taskDetails);
-//std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+  //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   return newTask; 
 }
 
@@ -37,7 +37,6 @@ void saveTask(const std::string& filename, const std::vector<Tasks>& data){
       outputFile << value.taskName << "\n";
       outputFile << value.taskDetails << "\n";
       outputFile << value.isDone << "\n";
-      outputFile << '\n';
     }
     outputFile.close();
   }
@@ -53,16 +52,16 @@ void loadTasks(const std::string& filename, std::vector<Tasks>& data){
   if(inputFile.is_open()){
     int count = 1;
     while(std::getline(inputFile,line)&& !(inputFile.eof())){
-        if(count % 3 == 1){
-          newTask.taskName = line;
-        }
-        else if(count % 3 == 2){
-          newTask.taskDetails = line;
-        }
-        else if(count % 3 == 3){
-          newTask.isDone = std::stoi(line);
-          data.push_back(newTask);
-        }
+      if(count % 3 == 1){
+        newTask.taskName = line;
+      }
+      else if(count % 3 == 2){
+        newTask.taskDetails = line;
+      }
+      else if(count % 3 == 0){
+        newTask.isDone = std::stoi(line);
+        data.push_back(newTask);
+      }
       count++;
     }
     inputFile.close();
@@ -71,7 +70,14 @@ void loadTasks(const std::string& filename, std::vector<Tasks>& data){
     std::cerr << "Failed to open file." << std::endl;
   }
 }
-
+void updateTasks(const int& index, std::vector<Tasks>& data){
+  if(index <= 0 && index < data.size()) std::cout <<"Invalid Task Index\n";
+  else{
+    data.at(index-1).isDone = true;
+    std::cout <<"Updating task: " << index;
+  }
+}
+  
 void printMenu(){
   std::cout <<"---------------------------------\n"
     <<"            MAIN MENU            \n"
@@ -80,7 +86,7 @@ void printMenu(){
     <<"                                 \n"
     <<"\t1) View Tasks List               \n"
     <<"\t2) Add New Task                  \n"
-    <<"\t3) Update a Task                 \n"
+    <<"\t3) Update Completion Status     \n"
     <<"\t4) Delete a Task                 \n"
     <<"\t5) Exit Program                 \n"
     <<"                                 \n"
@@ -88,11 +94,11 @@ void printMenu(){
 }
 void printList(std::vector<Tasks>& list){
   std::cout<<"===================\n"
-           <<"\tTo Do List\n"
-           <<"===================\n";
+    <<"\tTo Do List\n"
+    <<"===================\n";
   for(int i = 0; i < list.size(); i++){
-      std::cout << i+1 <<")" << list.at(i);
-      std::cout << std::endl;
+    std::cout << i+1 <<")" << list.at(i);
+    std::cout << std::endl;
   }
 
 }
@@ -103,6 +109,7 @@ int main(){
   std::vector<Tasks> toDoList;
   std::string filename = "data.txt";
   loadTasks(filename,toDoList);
+  int index = 0;
   bool continueLoop = true;
   while(true){
     system("clear");
@@ -124,11 +131,20 @@ int main(){
     } 
     if(option == 2){
       toDoList.push_back(createTask());
-    //  saveTask(filename, toDoList);
+      //  saveTask(filename, toDoList);
+    }
+    if(option == 3){
+      system("clear");
+      printList(toDoList);
+      std::cout <<"Which task to update: ";
+      std::cin >> index;
+      updateTasks(index,toDoList);
     }
     if(option == 5){
+      std::cout <<"Saving Program...\n"; 
+      sleep(1);
       std::cout <<"Exiting Program" << std::endl;
-      sleep(2);
+      sleep(1);
       saveTask(filename, toDoList);
       exit(0);
     }
