@@ -51,15 +51,15 @@ void loadTasks(const std::string& filename, std::vector<Tasks>& data){
   std::string line;
   std::ifstream inputFile(filename);
   if(inputFile.is_open()){
-    int count = 0;
-    while(std::getline(inputFile,line)){
-        if(count % 3 == 0){
+    int count = 1;
+    while(std::getline(inputFile,line)&& !(inputFile.eof())){
+        if(count % 3 == 1){
           newTask.taskName = line;
         }
-        else if(count % 3 == 1){
+        else if(count % 3 == 2){
           newTask.taskDetails = line;
         }
-        else if(count % 3 == 2){
+        else if(count % 3 == 3){
           newTask.isDone = std::stoi(line);
           data.push_back(newTask);
         }
@@ -102,6 +102,7 @@ void taskOptions(int option, std::vector<Tasks>& list){
 int main(){
   std::vector<Tasks> toDoList;
   std::string filename = "data.txt";
+  loadTasks(filename,toDoList);
   bool continueLoop = true;
   while(true){
     system("clear");
@@ -119,6 +120,7 @@ int main(){
           continueLoop = false;
         }
       }
+      continueLoop = true;
     } 
     if(option == 2){
       toDoList.push_back(createTask());
@@ -127,6 +129,7 @@ int main(){
     if(option == 5){
       std::cout <<"Exiting Program" << std::endl;
       sleep(2);
+      saveTask(filename, toDoList);
       exit(0);
     }
     saveTask(filename, toDoList);
