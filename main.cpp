@@ -10,10 +10,9 @@ struct Tasks {
   std::string taskName;
   std::string taskDetails;
   bool isDone = false;
-
 };
 
-std:: ostream& operator<<(std::ostream& os, const Tasks& task){
+std::ostream& operator<<(std::ostream& os, const Tasks& task){
   os <<"\tTask Name: "<< task.taskName << std::endl;
   os <<"\tTaks Priority: " << task.taskDetails << std::endl;
   os <<"\tCompleted: " << std::boolalpha << task.isDone << std::endl;
@@ -74,10 +73,19 @@ void updateTasks(const int& index, std::vector<Tasks>& data){
   if(index <= 0 && index < data.size()) std::cout <<"Invalid Task Index\n";
   else{
     data.at(index-1).isDone = true;
-    std::cout <<"Updating task: " << index;
+    std::cout <<"Updating Task: " << index;
   }
 }
-  
+
+void deleteTasks(const int& index, std::vector<Tasks>& data){
+  if(index < data.size() && index <= 0) std::cout << "Invalid Task Index\n";
+  else{
+    data.erase(data.begin() + (index-1));
+    std::cout <<"Deleting Task: " << index;
+    sleep(1);
+  }
+}
+
 void printMenu(){
   std::cout <<"---------------------------------\n"
     <<"            MAIN MENU            \n"
@@ -109,12 +117,12 @@ int main(){
   std::vector<Tasks> toDoList;
   std::string filename = "data.txt";
   loadTasks(filename,toDoList);
-  int index = 0;
   bool continueLoop = true;
   while(true){
     system("clear");
     printMenu();
     int option = 0;
+    int index = 0;
     std::cin >> option;
     if(option == 1){
       while(continueLoop){
@@ -140,6 +148,13 @@ int main(){
       std::cin >> index;
       updateTasks(index,toDoList);
     }
+    if(option == 4){
+      system("clear");
+      printList(toDoList);
+      std::cout << "Which task to delete: ";
+      std::cin >> index;
+      deleteTasks(index,toDoList);
+    } 
     if(option == 5){
       std::cout <<"Saving Program...\n"; 
       sleep(1);
