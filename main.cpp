@@ -77,12 +77,11 @@ void updateTasks(const int& index, std::vector<Tasks>& data){
   }
 }
 
-void deleteTasks(const int& index, std::vector<Tasks>& data){
-  if(index < data.size() && index <= 0) std::cout << "Invalid Task Index\n";
+bool deleteTasks(const int& index, std::vector<Tasks>& data){
+  if(index < data.size() && index <= 0) return false;
   else{
     data.erase(data.begin() + (index-1));
-    std::cout <<"Deleting Task: " << index;
-    sleep(1);
+    return true;
   }
 }
 
@@ -124,45 +123,59 @@ int main(){
     int option = 0;
     int index = 0;
     std::cin >> option;
-    if(option == 1){
-      while(continueLoop){
-        system("clear");
-        char userInput;
-        printList(toDoList);
-        std::cout <<"Press 'q' to return to main menu"<< std::endl;
-        std::cin >> userInput;
-        if(toupper(userInput) == 'Q'){
-          continueLoop = false;
+    if(!std::cin && option != 1 && option != 2 && option != 3 && option !=4 && option != 5){
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      continue;
+    }
+    else{
+      if(option == 1){
+        while(continueLoop){
+          system("clear");
+          char userInput;
+          printList(toDoList);
+          std::cout <<"Press 'q' to return to main menu"<< std::endl;
+          std::cin >> userInput;
+          if(toupper(userInput) == 'Q'){
+            continueLoop = false;
+          }
         }
+        continueLoop = true;
+      } 
+      if(option == 2){
+        toDoList.push_back(createTask());
+        //  saveTask(filename, toDoList);
       }
-      continueLoop = true;
-    } 
-    if(option == 2){
-      toDoList.push_back(createTask());
-      //  saveTask(filename, toDoList);
-    }
-    if(option == 3){
-      system("clear");
-      printList(toDoList);
-      std::cout <<"Which task to update: ";
-      std::cin >> index;
-      updateTasks(index,toDoList);
-    }
-    if(option == 4){
-      system("clear");
-      printList(toDoList);
-      std::cout << "Which task to delete: ";
-      std::cin >> index;
-      deleteTasks(index,toDoList);
-    } 
-    if(option == 5){
-      std::cout <<"Saving Program...\n"; 
-      sleep(1);
-      std::cout <<"Exiting Program" << std::endl;
-      sleep(1);
+      if(option == 3){
+        system("clear");
+        printList(toDoList);
+        std::cout <<"Which task to update: ";
+        std::cin >> index;
+        updateTasks(index,toDoList);
+      }
+      if(option == 4){
+        system("clear");
+        printList(toDoList);
+        std::cout << "Which task to delete: ";
+        std::cin >> index;
+        bool deletion = deleteTasks(index,toDoList);
+        if(deletion){
+          std::cout <<"Deleting Task: " << index;
+        }
+        else{
+          std::cout <<"Invalid option!\n";
+        }
+        sleep(1);
+      } 
+      if(option == 5){
+        std::cout <<"Saving Program...\n"; 
+        sleep(1);
+        std::cout <<"Exiting Program" << std::endl;
+        sleep(1);
+        saveTask(filename, toDoList);
+        exit(0);
+      }
       saveTask(filename, toDoList);
-      exit(0);
     }
-    saveTask(filename, toDoList);
   }
 }
