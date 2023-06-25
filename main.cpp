@@ -1,117 +1,8 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <limits>
+#include "Tasks.h"
 #include <cstdlib>
 #include <unistd.h>
+#include <limits>
 
-struct Tasks {
-  std::string taskName;
-  std::string taskDetails;
-  bool isDone = false;
-};
-
-std::ostream& operator<<(std::ostream& os, const Tasks& task){
-  os <<"\tTask Name: "<< task.taskName << std::endl;
-  os <<"\tTaks Priority: " << task.taskDetails << std::endl;
-  os <<"\tCompleted: " << std::boolalpha << task.isDone << std::endl;
-  return os;
-}
-
-Tasks createTask(){
-  Tasks newTask;
-  std::cout <<"Task Name: ";
-  std::getline(std::cin >> std::ws,newTask.taskName); 
-  std::cout <<"Task Priority(High/Medium/Low): ";
-  std::getline(std::cin,newTask.taskDetails);
-  //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-  return newTask; 
-}
-
-void saveTask(const std::string& filename, const std::vector<Tasks>& data){
-  std::ofstream outputFile(filename);
-  if(outputFile.is_open()){
-    for(const Tasks& value : data){
-      outputFile << value.taskName << "\n";
-      outputFile << value.taskDetails << "\n";
-      outputFile << value.isDone << "\n";
-    }
-    outputFile.close();
-  }
-  else{
-    std::cerr << "Failed to save data to the file: " << filename << std::endl;
-  }
-}
-
-void loadTasks(const std::string& filename, std::vector<Tasks>& data){
-  Tasks newTask;
-  std::string line;
-  std::ifstream inputFile(filename);
-  if(inputFile.is_open()){
-    int count = 1;
-    while(std::getline(inputFile,line)&& !(inputFile.eof())){
-      if(count % 3 == 1){
-        newTask.taskName = line;
-      }
-      else if(count % 3 == 2){
-        newTask.taskDetails = line;
-      }
-      else if(count % 3 == 0){
-        newTask.isDone = std::stoi(line);
-        data.push_back(newTask);
-      }
-      count++;
-    }
-    inputFile.close();
-  }
-  else{
-    std::cerr << "Failed to open file." << std::endl;
-  }
-}
-void updateTasks(const int& index, std::vector<Tasks>& data){
-  if(index <= 0 && index < data.size()) std::cout <<"Invalid Task Index\n";
-  else{
-    data.at(index-1).isDone = true;
-    std::cout <<"Updating Task: " << index;
-  }
-}
-
-bool deleteTasks(const int& index, std::vector<Tasks>& data){
-  if(index < data.size() && index <= 0) return false;
-  else{
-    data.erase(data.begin() + (index-1));
-    return true;
-  }
-}
-
-void printMenu(){
-  std::cout <<"---------------------------------\n"
-    <<"            MAIN MENU            \n"
-    <<"                                 \n"
-    <<"SELECT AN OPTION                 \n"
-    <<"                                 \n"
-    <<"\t1) View Tasks List               \n"
-    <<"\t2) Add New Task                  \n"
-    <<"\t3) Update Completion Status     \n"
-    <<"\t4) Delete a Task                 \n"
-    <<"\t5) Exit Program                 \n"
-    <<"                                 \n"
-    <<"---------------------------------\n";
-}
-void printList(std::vector<Tasks>& list){
-  std::cout<<"===================\n"
-    <<"\tTo Do List\n"
-    <<"===================\n";
-  for(int i = 0; i < list.size(); i++){
-    std::cout << i+1 <<")" << list.at(i);
-    std::cout << std::endl;
-  }
-
-}
-void taskOptions(int option, std::vector<Tasks>& list){
-
-}
 int main(){
   std::vector<Tasks> toDoList;
   std::string filename = "data.txt";
@@ -142,18 +33,18 @@ int main(){
         }
         continueLoop = true;
       } 
-      if(option == 2){
+      else if(option == 2){
         toDoList.push_back(createTask());
         //  saveTask(filename, toDoList);
       }
-      if(option == 3){
+      else if(option == 3){
         system("clear");
         printList(toDoList);
         std::cout <<"Which task to update: ";
         std::cin >> index;
         updateTasks(index,toDoList);
       }
-      if(option == 4){
+      else if(option == 4){
         system("clear");
         printList(toDoList);
         std::cout << "Which task to delete: ";
@@ -167,7 +58,7 @@ int main(){
         }
         sleep(1);
       } 
-      if(option == 5){
+      else if(option == 5){
         std::cout <<"Saving Program...\n"; 
         sleep(1);
         std::cout <<"Exiting Program" << std::endl;
