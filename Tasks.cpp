@@ -1,4 +1,5 @@
 #include "Tasks.h"
+#include <cctype>
 
 Tasks::Tasks() : taskName("Default Task"), taskPriority("Default"), isDone(false) {}
 Tasks::Tasks(std::string& name, std::string prio) : taskName(name), taskPriority(prio), isDone(false) {}
@@ -23,8 +24,24 @@ Tasks createTask(){
   std::string name, prio;
   std::cout <<"Task Name: ";
   std::getline(std::cin >> std::ws, name);
-  std::cout <<"Task Priority(High/Medium/Low): ";
-  std::getline(std::cin, prio);
+  bool validInput = false;
+  while(!validInput){
+    std::cout <<"Task Priority(High/Medium/Low): ";
+    std::getline(std::cin, prio);
+    for(char& c : prio){
+      if(std::isalpha(c)){
+        c = std::toupper(c);
+      }
+    }
+    if(prio == "HIGH" || prio == "MEDIUM" || prio == "LOW"){
+      //std::cout<< "INVALID PRIORITY INPUT\n";
+      validInput = true;
+    }
+    else{
+      std::cout<< "INVALID PRIORITY INPUT\n";
+      //validInput = true;
+    }
+  }
   Tasks newTask(name,prio);
   return newTask;
 }
